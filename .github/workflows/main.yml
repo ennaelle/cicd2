@@ -31,6 +31,6 @@ jobs:
               with:
                 context: ${{ matrix.context_name }}
                 push: true
-                tags: ${{ matrix.image_name }}
+                tags: ${{ matrix.image_name }}:latest
                 cache-from: type=gha
                 cache-to: type=gha, mode=max

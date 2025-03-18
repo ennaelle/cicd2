@@ -8,9 +8,9 @@ jobs:
           matrix:
             include:
               - context_name: ./frontend
-                image_name: [ghcr.io/ennaelle/cicd2/frontend:latest, ghcr.io/ennaelle/cicd2/frontend:latest]
+                image_name: [ghcr.io/ennaelle/cicd2/frontend:latest, ghcr.io/ennaelle/cicd2/frontend]
               - context_name: ./node-api
-                image_name: [ghcr.io/ennaelle/cicd2/frontend:latest, ghcr.io/ennaelle/cicd2/node-api:latest]
+                image_name: [ghcr.io/ennaelle/cicd2/frontend:latest, ghcr.io/ennaelle/cicd2/node-api]
         permissions:
             packages: write
         steps:

@@ -1,88 +1,89 @@
 name: CI/CD workflow for Github
-on: push
+on: 
+  push:
 
 jobs:
-    tests-frontend:
-      runs-on: self-hosted
-      container:
-        image: node:24-alpine
-      defaults:
-        run:
-          working-directory: ./frontend
-      steps:
-        - name:  checkout code
-          uses: actions/checkout@v4
-        - name: deps install node
-          uses: actions/setup-node@v3
-          with:
-             cache: 'npm'
-             cache-dependency-path: ./frontend/package-lock.json
-        - name: install deps
-          run: npm ci --prefer-offline
-        - name: linter
-          run: npm run lint
+  tests-frontend:
+    runs-on: self-hosted
+    container:
+      image: node:24-alpine
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name:  checkout code
+        uses: actions/checkout@v4
+      - name: deps install node
+        uses: actions/setup-node@v3
+        with:
+           cache: 'npm'
+           cache-dependency-path: ./frontend/package-lock.json
+      - name: install deps
+        run: npm ci --prefer-offline
+      - name: linter
+        run: npm run lint
 
-    tests-backend:
-      runs-on: self-hosted
-      container:
-        image: node:24-alpine      
-      defaults:
-        run:
-          working-directory: ./node-api      
-      steps:
-        - name:  checkout code
-          uses: actions/checkout@v4
-        - name: deps install node
-          uses: actions/setup-node@v3
-          with:
-              cache: 'npm'
-              cache-dependency-path: ./node-api/package-lock.json
-        - name: install deps
-          run: npm ci --prefer-offline
-        - name: linter
-          run: npm run lint      
-        - name: unit tests
-          run: npm run test:ci
+  tests-backend:
+    runs-on: self-hosted
+    container:
+      image: node:24-alpine      
+    defaults:
+      run:
+        working-directory: ./node-api      
+    steps:
+      - name:  checkout code
+        uses: actions/checkout@v4
+      - name: deps install node
+        uses: actions/setup-node@v3
+        with:
+            cache: 'npm'
+            cache-dependency-path: ./node-api/package-lock.json
+      - name: install deps
+        run: npm ci --prefer-offline
+      - name: linter
+        run: npm run lint      
+      - name: unit tests
+        run: npm run test:ci
 
-    build-frontend-and-node-api:
-        runs-on: self-hosted
-      container:
-        image: node:24-alpine        
-        needs:
-          - tests-frontend
-          - tests-backend
-        strategy:
-          matrix:
-            include:
-              - context_name: ./frontend
-                image_name: ghcr.io/ennaelle/cicd2/frontend:latest
-              - context_name: ./node-api
-                image_name: ghcr.io/ennaelle/cicd2/node-api:latest
-        permissions:
-            packages: write
-        steps:
-            - name: checkout code
-              uses: actions/checkout@v3
-            - name: setup QEMU
-              uses: docker/setup-qemu-action@v3
-            - name: setup buildx
-              uses: docker/setup-buildx-action@v3
-            - name: docker metadata
-              id: meta
-              uses: docker/metadata-action@v5
-              with:
-                images: ${{ matrix.image_name }}
-            - name: docker login
-              uses: docker/login-action@v3
-              with:
-                registry: ghcr.io
-                username: ${{ github.actor }}
-                password: ${{ secrets.GITHUB_TOKEN }}
-            - name: build and push
-              uses: docker/build-push-action@v5
-              with:
-                context: ${{ matrix.context_name }}
-                push: true
-                tags: ${{ matrix.image_name }}
-                cache-from: type=gha
-                cache-to: type=gha, mode=max
+  build-frontend-and-node-api:
+    runs-on: self-hosted
+    container:
+      image: node:24-alpine        
+    needs:
+      - tests-frontend
+      - tests-backend
+    strategy:
+      matrix:
+        include:
+          - context_name: ./frontend
+            image_name: ghcr.io/ennaelle/cicd2/frontend:latest
+          - context_name: ./node-api
+            image_name: ghcr.io/ennaelle/cicd2/node-api:latest
+    permissions:
+      packages: write
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: setup QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v3
+      - name: docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image_name }}
+      - name: docker login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context_name }}
+          push: true
+          tags: ${{ matrix.image_name }}
+          cache-from: type=gha
+          cache-to: type=gha, mode=max

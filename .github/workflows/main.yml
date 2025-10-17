@@ -4,7 +4,9 @@ on: push
 jobs:
 
     tests-frontend:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
+      container:
+        image: node:24-alpine
       defaults:
         run:
           working-directory: ./frontend
@@ -22,7 +24,9 @@ jobs:
           run: npm run lint
 
     tests-backend:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
+      container:
+        image: node:24-alpine      
       defaults:
         run:
           working-directory: ./node-api      
@@ -42,7 +46,9 @@ jobs:
           run: npm run test:ci
 
     build-frontend-and-node-api:
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
+      container:
+        image: node:24-alpine        
         needs:
           - tests-frontend
           - tests-backend

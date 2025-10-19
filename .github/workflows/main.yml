@@ -6,7 +6,7 @@ jobs:
   tests-frontend:
     runs-on: self-hosted
     container:
-      image: node:24-alpine
+      image: node:25-bookworm-slim
     defaults:
       run:
         working-directory: ./frontend
@@ -26,7 +26,7 @@ jobs:
   tests-backend:
     runs-on: self-hosted
     container:
-      image: node:24-alpine      
+      image: node:25-bookworm-slim
     defaults:
       run:
         working-directory: ./node-api      
@@ -49,7 +49,7 @@ jobs:
   build-frontend-and-node-api:
     runs-on: self-hosted
     container:
-      image: node:24-alpine        
+      image: node:25-bookworm-slim        
     needs:
       - tests-frontend
       - tests-backend

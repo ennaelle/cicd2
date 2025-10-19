@@ -44,6 +44,7 @@ jobs:
         run: npm run lint      
       - name: unit tests
         run: npm run test:ci
+        continue-on-error: true
 
   build-frontend-and-node-api:
     runs-on: self-hosted

@@ -4,9 +4,7 @@ on:
 
 jobs:
   tests-frontend:
-    runs-on: self-hosted
-    container:
-      image: node:25-bookworm-slim
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -24,9 +22,7 @@ jobs:
         run: npm run lint
 
   tests-backend:
-    runs-on: self-hosted
-    container:
-      image: node:25-bookworm-slim
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./node-api      
@@ -47,9 +43,7 @@ jobs:
         continue-on-error: true
 
   build-frontend-and-node-api:
-    runs-on: self-hosted
-    container:
-      image: node:25-bookworm-slim        
+    runs-on: ubuntu-latest  
     needs:
       - tests-frontend
       - tests-backend

@@ -1,6 +1,6 @@
 name: CI/CD workflow for Github
 on: 
-  push:
+  workflow_dispatch:
 
 jobs:
   tests-frontend:
